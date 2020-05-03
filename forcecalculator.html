@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="forcemain.css">
+    <title>Force Calculator</title>
+
+    <script>
+        function calc() {
+            var canvas = document.getElementById("sim");
+            var c = canvas.getContext("2d");
+
+            c.clearRect(0, 0, canvas.width, canvas.height);
+
+            var charge1 = document.getElementById("charge1-input").value;
+            var charge2 = document.getElementById("charge2-input").value;
+            var radius = document.getElementById("radius-input").value;
+
+            // Grabs inputted values
+
+            var charge1Size = 0;
+            var charge2Size = 0;
+            var radiusDistance = 0;
+
+            // Sets default values for distance modifiers
+
+            var charge1Color;
+            var charge2Color;
+            var sign1Color;
+            var sign2Color;
+
+            var charge1Arrow;
+            var charge2Arrow;
+            var charge1Point;
+            var charge2Point;
+
+            var force = Math.abs(((8.988E9*charge1*charge2)/Math.pow(radius, 2))); // Plugs inputted values into force formula
+
+            var force1Output;
+            var force2Output;
+
+            if (Math.sign(charge1*charge2) == 1) {
+                force1Output = (force * -1).toExponential();
+                force2Output = force.toExponential();
+            } else if (Math.sign(charge1*charge2) == -1) {
+                force1Output = force.toExponential();
+                force2Output = (force * -1).toExponential();
+            } else {
+                force1Output = 0;
+                force2Output = 0;
+            }
+
+            document.getElementById("force1-output").value = force1Output;
+            document.getElementById("force2-output").value = force2Output;
+
+            // Sets outputted forces appropriately
+
+            if (Math.abs(charge1) < 1) {
+                charge1Size = 0;
+            } else if (Math.abs(charge1) > 100) {
+                charge1Size = 100;
+            } else {
+                charge1Size = Math.abs(charge1);
+            }
+
+            if (Math.abs(charge2) < 1) {
+                charge2Size = 0;
+            } else if (Math.abs(charge2) > 100) {
+                charge2Size = 100;
+            } else {
+                charge2Size = Math.abs(charge2);
+            }
+
+            if (Math.abs(radius) < 1) {
+                radiusDistance = 0;
+            } else if (Math.abs(radius) > 600) {
+                radiusDistance = 300;
+            } else {
+                radiusDistance = Math.abs(radius)/2;
+            }
+
+            // Sets inputted charges and range as distance modifiers, checks for max and min
+
+            if (Math.sign(charge1) == 1) {
+                charge1Color = "red";
+                sign1Color = "white";
+            } else if (Math.sign(charge1) == -1) {
+                charge1Color = "blue";
+                sign1Color = "blue";
+            } else {
+                charge1Color = "rgb(54, 58, 68)";
+                sign1Color = "rgb(54, 58, 68)";
+            }
+
+            if (Math.sign(charge2) == 1) {
+                charge2Color = "red";
+                sign2Color = "white";
+            } else if (Math.sign(charge2) == -1) {
+                charge2Color = "blue";
+                sign2Color = "blue";
+            } else {
+                charge2Color = "rgb(54, 58, 68)";
+                sign2Color = "rgb(54, 58, 68)";
+            }
+
+            // Changes charge colors depending on inputted charge signs
+
+            if (Math.sign(charge1*charge2) == 1) {
+                charge1Arrow = 540 - 2*charge1Size - radiusDistance;
+                charge1Point = charge1Arrow - 20;
+                charge2Arrow = 760 + 2*charge2Size + radiusDistance;
+                charge2Point = charge2Arrow + 20;
+            } else if (Math.sign(charge1*charge2) == -1) {
+                charge1Arrow = 630;
+                charge1Point = 650;
+                charge2Arrow = 670;
+                charge2Point = 650;
+            }
+
+            // Sets position of arrows
+
+            c.beginPath();
+            c.setLineDash([]);
+            c.lineWidth = 5;
+            c.moveTo(640 - charge1Size - radiusDistance, 150);
+            c.lineTo(charge1Arrow, 150);
+            c.strokeStyle = "black";
+            c.stroke();
+            c.closePath();
+
+            c.beginPath();
+            c.setLineDash([]);
+            c.lineWidth = 5;
+            c.moveTo(660 + charge2Size + radiusDistance, 150);
+            c.lineTo(charge2Arrow, 150);
+            c.strokeStyle = "black";
+            c.stroke();
+            c.closePath();
+
+            c.beginPath();
+            c.setLineDash([20, 5]);
+            c.lineWidth = 2;
+            c.moveTo(640 - charge1Size - radiusDistance, 150);
+            c.lineTo(660 + charge2Size + radiusDistance, 150);
+            c.strokeStyle = "black";
+            c.stroke();
+            c.closePath();
+
+            c.beginPath();
+            c.arc(640 - charge1Size - radiusDistance, 150, 10 + charge1Size, 0, 2 * Math.PI);
+            c.fillStyle = charge1Color;
+            c.fill();
+            c.closePath();
+
+            c.beginPath();
+            c.arc(660 + charge2Size + radiusDistance, 150, 10 + charge2Size, 0, 2 * Math.PI);
+            c.fillStyle = charge2Color;
+            c.fill();
+            c.closePath();
+
+            c.beginPath();
+            c.moveTo(charge1Arrow, 150);
+            c.lineTo(charge1Arrow, 160);
+            c.lineTo(charge1Point, 150);
+            c.lineTo(charge1Arrow, 140);
+            c.lineTo(charge1Arrow, 150);
+            c.fillStyle = "black";
+            c.fill();
+            c.closePath();
+
+            c.beginPath();
+            c.moveTo(charge2Arrow, 150);
+            c.lineTo(charge2Arrow, 160);
+            c.lineTo(charge2Point, 150);
+            c.lineTo(charge2Arrow, 140);
+            c.lineTo(charge2Arrow, 150);
+            c.fillStyle = "black";
+            c.fill();
+            c.closePath();
+
+            c.beginPath();
+            c.setLineDash([]);
+            c.lineWidth = charge1Size/10;
+            c.moveTo(640 - charge1Size - radiusDistance, 150 - charge1Size/2);
+            c.lineTo(640 - charge1Size - radiusDistance, 150 + charge1Size/2);
+            c.strokeStyle = sign1Color;
+            c.stroke();
+            c.closePath();
+
+            c.beginPath();
+            c.setLineDash([]);
+            c.lineWidth = charge2Size/10;
+            c.moveTo(660 + charge2Size + radiusDistance, 150 - charge2Size/2);
+            c.lineTo(660 + charge2Size + radiusDistance, 150 + charge2Size/2);
+            c.strokeStyle = sign2Color;
+            c.stroke();
+            c.closePath();
+
+            c.beginPath();
+            c.setLineDash([]);
+            c.lineWidth = charge1Size/10;
+            c.moveTo((640 - charge1Size - radiusDistance) - charge1Size/2, 150);
+            c.lineTo((640 - charge1Size - radiusDistance) + charge1Size/2, 150);
+            c.strokeStyle = "white";
+            c.stroke();
+            c.closePath();
+
+            c.beginPath();
+            c.setLineDash([]);
+            c.lineWidth = charge2Size/10;
+            c.moveTo((660 + charge2Size + radiusDistance) - charge2Size/2, 150);
+            c.lineTo((660 + charge2Size + radiusDistance) + charge2Size/2, 150);
+            c.strokeStyle = "white";
+            c.stroke();
+            c.closePath();
+        }
+    </script>
+
+</head>
+<body>
+    <div class="textbox-container">
+        <label for="charge1-input">Charge 1 (C):</label>
+        <input id="charge1-input" type="number">
+        
+        <label for="charge2-input">Charge 2 (C):</label>
+        <input id="charge2-input" type="number">
+        
+        <label for="radius-input">Radius (m):</label>
+        <input id="radius-input" type="number">
+
+        <button onclick="calc()">Calculate</button>
+    </div>
+
+    <div class="canvas-container">
+        <canvas id="sim" width="1300" height="300" style="border: solid 3px rgb(83, 89, 105)"></canvas>
+    </div>
+
+    <div class="answer-container">
+        <label for="force1-output">Force on Charge 1 (N):</label>
+        <input id="force1-output" type="number" readonly>
+
+        <label for="force2-output">Force on Charge 2 (N):</label>
+        <input id="force2-output" type="number" readonly>
+    </div>
+</body>
+</html>
